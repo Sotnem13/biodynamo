@@ -19,6 +19,7 @@ option(coverage "Enable test coverage report generation." OFF)
 
 #--------------------- find packages -------------
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+set(OpenMP_CXX_FLAGS -fopenmp)
 find_package(OpenMP REQUIRED)
 # find_package(VTune REQUIRED)
 if (test)
@@ -231,3 +232,8 @@ endif()
 set(SIMULATION_TARGET cell_growth)
 add_executable(${SIMULATION_TARGET} ${CMAKE_SOURCE_DIR}/demo/cell_growth.cc)
 target_link_libraries(${SIMULATION_TARGET} biodynamo)
+
+# --------------------- build diffusion module simulation executable ---------------------
+set(DIFFUSION_SIM diffusion_octree)
+add_executable(${DIFFUSION_SIM} ${CMAKE_SOURCE_DIR}/demo/diffusion_octree.cc)
+target_link_libraries(${DIFFUSION_SIM} biodynamo)
