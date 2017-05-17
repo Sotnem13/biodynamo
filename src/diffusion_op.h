@@ -12,7 +12,9 @@ class Voxel {
 public:
   Point position_;
   double concentration = 0;
+
 };
+
 
 // TODO(Sotnem13):
 struct G {
@@ -21,44 +23,76 @@ struct G {
   double dvalue;
 };
 
-template <
-        template < typename T1 > class T >
+
 class DiffusionOp {
+
+    const auto D = ;
+
  public:
   DiffusionOp() {}
-  explicit DiffusionOp(int iterationCount) : iterationCount_(iterationCount) {}
-  ~DiffusionOp(){}
+  explicit DiffusionOp(int iteration_count)
+      : iteration_count_(iteration_count) {}
+  ~DiffusionOp() {}
   DiffusionOp(const DiffusionOp&) = delete;
   DiffusionOp& operator=(const DiffusionOp&) = delete;
+
+  template <typename TVoxel>
+  inline Ghost makeGhost(int ghost_index, TVoxel top, TVoxel bottom) {
+
+  }
 
   template <typename TContainer>
   void Compute(TContainer* voxels) const {
 
+// TODO(Sotnem13): use refinement octree
+
     double search_radius = 1;
     NeighborOp op(search_radius);
+    op.Compute(voxels);
+
+    sortNeighbors(voxels);
 
     for (int i = 0; i < iterationCount_; i++) {
-//      G{voxels};
 
-      for (auto &g : gg) {
-        auto t = g.top;
-        auto b = g.bottom;
+      for (auto voxel : voxels) {
+        for (int i = 0; i < maxNeighborsCount; i++) {
+          auto& ghost = voxel.ghosts[i];
+          if (!ghost) {
+            auto& neighbor = voxel.neighbor[i];
 
-//        if (!t) {
-//          auto pos = b->getPosition() + g.dpos;
-//          t = createAndAddVoxelTo(voxels, pos);
-//        } else if (!b) {
-//          auto pos = t->getPosition() - g.dpos;
-//          b = createAndAddVoxelTo(voxels, pos);
-//        }
-        t->concentration += g.dvalue;
-        b->concentration -= g.dvalue;
+            // Computing concentration change
+            auto delta_value = -voxel.concentration;
+            if (neighbor) {
+              delta_value += neighbor->concentration;
+            }
+            delta_value *= D / maxNeighborsCount;
+
+            //
+            ghost = makeGhost(i, voxel, neighbor);
+            ghost->delta_value = delta_value;
+            ghosts.push_back(ghost);
+          }
+        }
+      }
+
+      for (auto &ghost : ghosts) {
+        auto top = *ghost.top;
+        auto bottom = *ghost.bottom;
+        //
+        if (!bottom) {
+          auto pos = top->getPosition() - ghost.dpos;
+          bottom = createAndAddVoxelTo(voxels, pos);
+        }
+        // Update concentration
+        auto delta_value = ghost.delta_value;
+        top->concentration    += delta_value;
+        bottom->concentration -= delta_value;
       }
     }
   }
 
  private:
-    int iterationCount_ = 100;
+    int iteration_count_ = 100;
 };
 }  // namespace bdm
 
