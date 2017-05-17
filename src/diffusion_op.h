@@ -52,7 +52,7 @@ class DiffusionOp {
 
     sortNeighbors(voxels);
 
-    for (int i = 0; i < iterationCount_; i++) {
+    for (int j = 0; j < iterationCount_; j++) {
 
       for (auto voxel : voxels) {
         for (int i = 0; i < maxNeighborsCount; i++) {
