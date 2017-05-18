@@ -13,14 +13,19 @@ public:
   Point position_;
   double concentration = 0;
 
+  array<Ghost*, 6> ghosts;
+  array<Voxel*, 6> neighbor;
+
 };
 
 
 // TODO(Sotnem13):
-struct G {
+struct Ghost {
   Voxel* top;
   Voxel* bottom;
-  double dvalue;
+  double delta_value;
+  Point delta_pos;  //
+
 };
 
 
@@ -51,6 +56,7 @@ class DiffusionOp {
     op.Compute(voxels);
 
     sortNeighbors(voxels);
+    std::vector<Ghost> ghosts;
 
     for (int j = 0; j < iterationCount_; j++) {
 
@@ -78,15 +84,18 @@ class DiffusionOp {
       for (auto &ghost : ghosts) {
         auto top = *ghost.top;
         auto bottom = *ghost.bottom;
-        //
-        if (!bottom) {
-          auto pos = top->getPosition() - ghost.dpos;
-          bottom = createAndAddVoxelTo(voxels, pos);
-        }
-        // Update concentration
+
         auto delta_value = ghost.delta_value;
-        top->concentration    += delta_value;
-        bottom->concentration -= delta_value;
+        if( delta_value > param::kMinimalDifferenceConcentrationForExtracacellularDiffusion) {
+          //
+          if (!bottom) {
+            auto pos = top->getPosition() - ghost.delta_pos;
+            bottom = createAndAddVoxelTo(voxels, pos);
+          }
+          // Update concentration
+          top->concentration    += delta_value;
+          bottom->concentration -= delta_value;
+        }
       }
     }
   }
