@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="BioDynaMo"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="clang"/>
+		<Option virtualFolders="CMake Files\;CMake Files\cmake\;CMake Files\cmake-build-debug\;CMake Files\cmake-build-debug\gtest\;CMake Files\cmake-build-debug\gtest\tmp\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="biodynamo">
+				<Option output="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/libbiodynamo.so" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/src"/>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/third_party"/>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/gtest/src/gtest/include"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/c++/5.4.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/x86_64-linux-gnu/c++/5.4.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/c++/5.4.0/backward"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-3.8/bin/../lib/clang/3.8.0/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 biodynamo"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="biodynamo/fast">
+				<Option output="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/libbiodynamo.so" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/src"/>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/third_party"/>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/gtest/src/gtest/include"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/c++/5.4.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/x86_64-linux-gnu/c++/5.4.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/c++/5.4.0/backward"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-3.8/bin/../lib/clang/3.8.0/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 biodynamo/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="bdmclean">
+				<Option working_dir="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 bdmclean"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gtest">
+				<Option working_dir="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 gtest"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="runBiodynamoTests">
+				<Option output="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/runBiodynamoTests" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/src"/>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/third_party"/>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/gtest/src/gtest/include"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/c++/5.4.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/x86_64-linux-gnu/c++/5.4.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/c++/5.4.0/backward"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-3.8/bin/../lib/clang/3.8.0/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 runBiodynamoTests"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="runBiodynamoTests/fast">
+				<Option output="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/runBiodynamoTests" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/src"/>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/third_party"/>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/gtest/src/gtest/include"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/c++/5.4.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/x86_64-linux-gnu/c++/5.4.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/c++/5.4.0/backward"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-3.8/bin/../lib/clang/3.8.0/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 runBiodynamoTests/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="check">
+				<Option working_dir="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 check"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="diffusion_octree">
+				<Option output="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/diffusion_octree" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/src"/>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/third_party"/>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/gtest/src/gtest/include"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/c++/5.4.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/x86_64-linux-gnu/c++/5.4.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/c++/5.4.0/backward"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-3.8/bin/../lib/clang/3.8.0/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 diffusion_octree"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="diffusion_octree/fast">
+				<Option output="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/diffusion_octree" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/src"/>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/third_party"/>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/gtest/src/gtest/include"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/c++/5.4.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/x86_64-linux-gnu/c++/5.4.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/c++/5.4.0/backward"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-3.8/bin/../lib/clang/3.8.0/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 diffusion_octree/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test">
+				<Option working_dir="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 test"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="testbdmclean">
+				<Option working_dir="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 testbdmclean"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="libbdmclean">
+				<Option working_dir="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 libbdmclean"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="cell_growth">
+				<Option output="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/cell_growth" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/src"/>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/third_party"/>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/gtest/src/gtest/include"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/c++/5.4.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/x86_64-linux-gnu/c++/5.4.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/c++/5.4.0/backward"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-3.8/bin/../lib/clang/3.8.0/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 cell_growth"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="cell_growth/fast">
+				<Option output="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/cell_growth" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/src"/>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/third_party"/>
+					<Add directory="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/gtest/src/gtest/include"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/c++/5.4.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/x86_64-linux-gnu/c++/5.4.0"/>
+					<Add directory="/usr/bin/../lib/gcc/x86_64-linux-gnu/5.4.0/../../../../include/c++/5.4.0/backward"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-3.8/bin/../lib/clang/3.8.0/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 cell_growth/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/demo/cell_growth.cc">
+			<Option target="cell_growth"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/demo/diffusion_octree.cc">
+			<Option target="diffusion_octree"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/backend.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/bdm_interface.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/cell.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/debug.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/default_force.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/displacement_op.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/dividing_cell_op.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/exporter.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/inline_vector.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/macros.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/math_util.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/neighbor_nanoflann_op.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/neighbor_op.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/param.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/random.cc">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/random.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/resource_manager.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/scheduler.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/simulation_object.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/simulation_object_util.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/spatial_organization/bound.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/spatial_organization/kd_tree_node.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/spatial_organization/octree_node.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/spatial_organization/point.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/spatial_organization/spatial_tree_node.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/timing.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/timing_aggregator.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/type_util.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/src/vtune_op_wrapper.h">
+			<Option target="biodynamo"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/test/bdm_interface_test.cc">
+			<Option target="runBiodynamoTests"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/test/default_force_test.cc">
+			<Option target="runBiodynamoTests"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/test/displacement_op_test.cc">
+			<Option target="runBiodynamoTests"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/test/dividing_cell_op_test.cc">
+			<Option target="runBiodynamoTests"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/test/exporter_test.cc">
+			<Option target="runBiodynamoTests"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/test/inline_vector_test.cc">
+			<Option target="runBiodynamoTests"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/test/main.cc">
+			<Option target="runBiodynamoTests"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/test/math_util_test.cc">
+			<Option target="runBiodynamoTests"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/test/neighbor_op_test.cc">
+			<Option target="runBiodynamoTests"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/test/simulation_object_test.cc">
+			<Option target="runBiodynamoTests"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/test/simulation_object_util_test.cc">
+			<Option target="runBiodynamoTests"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/test/spatial_organization/bound_test.cc">
+			<Option target="runBiodynamoTests"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/test/spatial_organization/point_test.cc">
+			<Option target="runBiodynamoTests"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/test/spatial_organization/spatial_tree_test.cc">
+			<Option target="runBiodynamoTests"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/test/test_util_test.cc">
+			<Option target="runBiodynamoTests"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/test/type_util_test.cc">
+			<Option target="runBiodynamoTests"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/cmake/FindClangTools.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/cmake/doxygen.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/gtest/tmp/gtest-cfgcmd.txt.in">
+			<Option virtualFolder="CMake Files\cmake-build-debug\gtest\tmp\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

@@ -1,107 +1,58 @@
 #ifndef BIODYNAMO_DIFFUSION_OP_H
 #define BIODYNAMO_DIFFUSION_OP_H
 
+#include <vector>
+
 namespace bdm {
 using spatial_organization::SpatialTreeNode;
 using spatial_organization::Point;
+using spatial_organization::Voxel;
+using spatial_organization::AdaptiveMesh;
 
+
+using std::vector;
 using std::array;
 
-// TODO(Sotnem13): move to separate file
-class Voxel {
-public:
-  Point position_;
-  double concentration = 0;
-
-  array<Ghost*, 6> ghosts;
-  array<Voxel*, 6> neighbor;
-
-};
-
-
 // TODO(Sotnem13):
-struct Ghost {
-  Voxel* top;
-  Voxel* bottom;
+template <typename T>
+struct ConcentrationChange {
+  Voxel<T>* top;
+  Voxel<T>* bottom;
   double delta_value;
-  Point delta_pos;  //
-
 };
 
 
 class DiffusionOp {
 
-    const auto D = ;
-
  public:
   DiffusionOp() {}
-  explicit DiffusionOp(int iteration_count)
-      : iteration_count_(iteration_count) {}
+  explicit DiffusionOp(int iteration_count = 1, double diffusion_constant = 0.5)
+      : iteration_count_(iteration_count), diffusion_constant_(diffusion_constant){}
   ~DiffusionOp() {}
   DiffusionOp(const DiffusionOp&) = delete;
   DiffusionOp& operator=(const DiffusionOp&) = delete;
 
-  template <typename TVoxel>
-  inline Ghost makeGhost(int ghost_index, TVoxel top, TVoxel bottom) {
+  template <typename T>
+  void Compute(AdaptiveMesh<T>* mesh) const {
+    for (int i = 0; i < iteration_count_; i++) {
 
-  }
-
-  template <typename TContainer>
-  void Compute(TContainer* voxels) const {
-
-// TODO(Sotnem13): use refinement octree
-
-    double search_radius = 1;
-    NeighborOp op(search_radius);
-    op.Compute(voxels);
-
-    sortNeighbors(voxels);
-    std::vector<Ghost> ghosts;
-
-    for (int j = 0; j < iterationCount_; j++) {
-
-      for (auto voxel : voxels) {
-        for (int i = 0; i < maxNeighborsCount; i++) {
-          auto& ghost = voxel.ghosts[i];
-          if (!ghost) {
-            auto& neighbor = voxel.neighbor[i];
-
-            // Computing concentration change
-            auto delta_value = -voxel.concentration;
-            if (neighbor) {
-              delta_value += neighbor->concentration;
-            }
-            delta_value *= D / maxNeighborsCount;
-
-            //
-            ghost = makeGhost(i, voxel, neighbor);
-            ghost->delta_value = delta_value;
-            ghosts.push_back(ghost);
-          }
+      mesh->Refine([D = diffusion_constant_]
+                           (typename AdaptiveMesh<T>::Element &mesh_element) {
+        auto neighbors = mesh_element.Neighbors();
+        auto delta_value = 0; ;
+        for (auto neighbor: neighbors) {
+          delta_value += (neighbor.first - mesh_element.Value());
         }
-      }
-
-      for (auto &ghost : ghosts) {
-        auto top = *ghost.top;
-        auto bottom = *ghost.bottom;
-
-        auto delta_value = ghost.delta_value;
-        if( delta_value > param::kMinimalDifferenceConcentrationForExtracacellularDiffusion) {
-          //
-          if (!bottom) {
-            auto pos = top->getPosition() - ghost.delta_pos;
-            bottom = createAndAddVoxelTo(voxels, pos);
-          }
-          // Update concentration
-          top->concentration    += delta_value;
-          bottom->concentration -= delta_value;
-        }
-      }
+        auto new_value = mesh_element.Value();
+        new_value += delta_value*D/6;
+        mesh_element.SetValue(new_value);
+      });
     }
   }
 
  private:
-    int iteration_count_ = 100;
+  int iteration_count_;
+  double diffusion_constant_;
 };
 }  // namespace bdm
 
