@@ -42,11 +42,12 @@ class DiffusionOp {
         auto delta_value = 0; ;
         for (auto neighbor: neighbors) {
           delta_value += (neighbor.first - mesh_element.Value());
+          std::cout << 111 << std::endl;
         }
         auto new_value = mesh_element.Value();
-        new_value += delta_value*D/6;
+        new_value += delta_value*D/6.0;
         mesh_element.SetValue(new_value);
-      });
+      }, false);
     }
   }
 

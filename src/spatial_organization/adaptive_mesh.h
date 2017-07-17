@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <bitset>
-
+#include <functional>
 
 
 #include "spatial_organization/octree_node.h"
@@ -27,6 +27,7 @@ using namespace std;
 using std::vector;
 using std::array;
 using std::unordered_map;
+using std::function;
 
 
 template <typename T>
@@ -69,14 +70,19 @@ class AdaptiveMesh : public MeshData<T> {
       tie(x, y, z) = node_index.Position();
 
       for (auto neighbor_index : *neighbors_) {
-        auto neighbor = parent_->GetNode(neighbor_index);
+//        auto neighbor_value = parent_->GetNode(neighbor_index);
+//        if (neighbor == nullptr) {
+//          parent_
+//          parent_->GetNode(neighbor_index.Parent());
+//        }
         int64_t x_, y_, z_;
         tie(x_, y_, z_) = neighbor_index.Position();
+        auto neighbor_value = parent_->At(Point(x_, y_, z_));
         auto delta = Point(x - x_, y - y_, z - z_);
         delta.x_*=node_size.x_;
         delta.y_*=node_size.y_;
         delta.z_*=node_size.z_;
-        result.push_back(make_pair(neighbor->value, delta));
+        result.push_back(make_pair(neighbor_value, delta));
       }
       return result;
     }
@@ -93,11 +99,12 @@ class AdaptiveMesh : public MeshData<T> {
     friend AdaptiveMesh;
   };
 
-private:
+//private:
+protected:
   void Split(Node<T> *node);
   void Coarse(Node<T> *node);
 
-  vector<NodeIndex> GetAdjacentIndex(NodeIndex index, int level, bool mode) const;
+//  static vector<NodeIndex> GetAdjacentIndex(NodeIndex index, int at_level);
 //  template <typename>
 //  friend AccessPolicy;
 
@@ -121,7 +128,7 @@ template <typename T>
 void AdaptiveMesh<T>::Split(Node<T> *node) {
   MeshData<T>::Split(node);
 
-  auto neighbors = GetAdjacentIndex(node->Index(), node->Index().Level(), true);
+  auto neighbors = NodeIndex::GetAdjacentIndex<true>(node->Index(), node->Index().Level());
 
   for (auto neighbor_index : neighbors) {
     if (neighbor_index.Parent().code != node->Index().Parent().code) {
@@ -149,7 +156,7 @@ void AdaptiveMesh<T>::Coarse(Node<T>* node) {
   }
 
   if (need_coarse) {
-    auto neighbors = GetAdjacentIndex(node->Index(), node->Index().Level(), true);
+    auto neighbors = NodeIndex::GetAdjacentIndex<true>(node->Index(), node->Index().Level());
     for (int i = 0; i < neighbors.size() && need_coarse; i++) {
       auto neighbor = this->GetNode(neighbors[i]);
       if (!neighbor) {
@@ -174,19 +181,30 @@ template <typename T>
 void AdaptiveMesh<T>::Refine(
         function<void(Element&)> refine_func,
         bool mode) {
+
   auto &leafs = this->levels[this->max_level_];
+
   auto new_values = vector<pair<Node<T>*, T>>();
   std::stack<NodeIndex> stack;
   new_values.reserve(leafs.size());
 
+  auto neighbor_func = [](bool m){
+    if (m)
+      return NodeIndex::GetAdjacentIndex<true>;
+    else
+      return NodeIndex::GetAdjacentIndex<false>;
+  }(mode);
+
   for (auto &it : leafs) {
     auto &node = it.second;
-    auto neighbors = GetAdjacentIndex(node.Index(), this->max_level_, mode);
+    auto neighbors = neighbor_func(node.Index(), this->max_level_);
     Element elem(&node, &neighbors, this);
 
     for (auto &neighbor_index : neighbors) {
-      auto neighbor = this->BSLeaf(neighbor_index.Parent(), neighbor_index);
-      if (neighbor->Index().Level() != this->max_level_) {
+      auto neighbor_level = neighbor_index.Level();
+//      auto neighbor = this->BSLeaf(neighbor_level - 1, neighbor_level, neighbor_index);
+      auto neighbor = this->LSLeaf(neighbor_index);
+      if (neighbor->Index().Level() != this->max_level_ + 1) {
         stack.push(neighbor_index);
       }
     }
@@ -205,7 +223,7 @@ void AdaptiveMesh<T>::Refine(
     Split(this->GetNode(node_index.Parent()));
 
     auto node = this->GetNode(node_index);
-    auto neighbors = GetAdjacentIndex(node->Index(), this->max_level_, mode);
+    auto neighbors = neighbor_func(node->Index(), this->max_level_);
     auto elem = Element(node, &neighbors, this);
 
     refine_func(elem);
@@ -218,6 +236,7 @@ void AdaptiveMesh<T>::Refine(
 
   for (auto &n : new_values) {
     auto node = n.first;
+    cout << node->location_code  << n.second << endl;
     node->value = n.second;
   }
 
@@ -228,93 +247,6 @@ void AdaptiveMesh<T>::Refine(
 }
 
 
-
-
-template <typename T>
-vector<NodeIndex> AdaptiveMesh<T>::GetAdjacentIndex(NodeIndex index, int level, bool mode) const {
-  uint x = 0, y = 0, z = 0;
-  std::tie(x, y, z) = index.Position();
-
-//  int
-  auto level_offset = level - index.Level();
-
-  vector<NodeIndex> result;
-  result.reserve(26);
-
-  int count = (1 << level_offset);
-  auto child_size = (1 << (level_offset-1));
-//if()
-
-  auto center_x = (x << level_offset) + child_size;
-  auto center_y = (y << level_offset) + child_size;
-  auto center_z = (z << level_offset) + child_size;
-
-//  for
-    for (int dx = -1; dx < 2; dx++) {
-      for (int dz = dz0; dz < dz1; dz++) {
-//  auto dy0 = mode && y ? -1 : 0;
-//  auto dz0 = mode && z ? -1 : 0;
-//
-//  auto dx1 = count - dx0;
-//  auto dy1 = count - dy0;
-//  auto dz1 = count - dz0;
-//   for (int dx = -1; dx < 2; dx++) {
-     for (int dy = -1; dy < 2; dy++) {
-       for (int dz = -1; dz < 2; dz++) {
-//         auto x_ = center_x + dx * child_size;
-         auto y_ = center_y - child_size;
-         auto z_ = center_z + child_size;
-
-
-         if (x) {
-           auto position = std::make_tuple(x, y_, z_);
-           auto neighbor_index = NodeIndex(position);
-           result.push_back(neighbor_index);
-         }
-         auto position2 = std::make_tuple(x + count - 1, y_, z_);
-         neighbor_index = NodeIndex(position2);
-         result.push_back(neighbor_index);
-       }
-     }
-
-  dx0 = 0;
-  dx1 = count;
-
-  for (int dx = dx0; dx < dx1; dx++) {
-    for (int dz = dz0; dz < dz1; dz++) {
-      auto x_ = x + dx;
-      auto z_ = z + dz;
-
-      auto position = std::make_tuple(x_, y, z_);
-      auto neighbor_index = NodeIndex(position);
-      result.push_back(neighbor_index);
-
-
-      position = std::make_tuple(x_, y+count-1, z_);
-      neighbor_index = NodeIndex(position);
-      result.push_back(neighbor_index);
-    }
-  }
-  dy0 = 0;
-  dy1 = count;
-
-  for (int dx = dx0; dx < dx1; dx++) {
-   for (int dy = dy0; dy < dy1; dy++) {
-     auto x_ = x + dx;
-     auto y_ = y + dy;
-
-     auto position = std::make_tuple(x_, y_, z);
-     auto neighbor_index = NodeIndex(position);
-     result.push_back(neighbor_index);
-
-     position = std::make_tuple(x_, y_, z+count-1);
-     neighbor_index = NodeIndex(position);
-     result.push_back(neighbor_index);
-   }
- }
-
-  return result;
-}
 
 
 }  // namespace spatial_organization
