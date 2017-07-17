@@ -243,7 +243,6 @@ Node<T>* MeshData<T>::CreateNode(NodeIndex node_index) {
 
 template <typename T>
 Node<T>* MeshData<T>::GetNode(NodeIndex node_index) {
-//  BSLeaf
   auto &nodes = levels[node_index.Level()];
   auto node_iter = nodes.find(node_index.code);
   if (node_iter == nodes.end()) {
@@ -258,6 +257,8 @@ Node<T>* MeshData<T>::FindLeaf(NodeIndex nodeIndex) {
 //  return BSLeaf(0, max_level_, nodeIndex);
   return LSLeaf(nodeIndex);
 }
+
+//TODO(Sotnem13): Binary search have bug, needs to be fixed
 template <typename T>
 Node<T>* MeshData<T>::BSLeaf(int min_l, int max_l, NodeIndex max_depth_index) {
   auto middle_l = (max_l - min_l)/2;
@@ -267,9 +268,6 @@ Node<T>* MeshData<T>::BSLeaf(int min_l, int max_l, NodeIndex max_depth_index) {
   auto node = GetNode(middle_index);
 
   if (node == nullptr) {
-//    if (min.code == max.code)
-//      return nullptr;
-//    else
       return BSLeaf(min_l, middle_l, max_depth_index);
   }
   if (node->is_leaf)
