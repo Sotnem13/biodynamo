@@ -1,11 +1,11 @@
 #ifndef BIODYNAMO_NODE_INDEX_H
 #define BIODYNAMO_NODE_INDEX_H
 
-#include <tuple>
-
+#include <vector>
 namespace bdm {
 namespace spatial_organization {
 
+using std::vector;
 /// Implement Morton keys
 /// The key k(n) of a node n can be generated recursively from the
 /// octree hierarchy: the key of the root is 1, and the key of the child
@@ -80,25 +80,21 @@ struct NodeIndex {
 };
 
 NodeIndex::NodeIndex() : code(1) {}
+
 NodeIndex::NodeIndex(uint_fast64_t code_) : code(code_) {}
 
 NodeIndex::NodeIndex(uint x, uint y, uint z, uint level) {
-code = oct_dilate(x)      |
+  code = oct_dilate(x)    |
        oct_dilate(y) << 1 |
        oct_dilate(z) << 2;
-code ^= 1 << (3*level);
+  code ^= 1l << (3*level);
 }
 
 NodeIndex NodeIndex::Parent() {
   return NodeIndex(this->code >> 3);
 }
+
 uint NodeIndex::Level() {
-//  uint level = 0;
-//  while (code >> 3*(level+1)) {
-//    level += 1;
-//  }
-//  return level;
-//  uint level = std::log2(code)
   static const int tab64[64] = {
           63,  0, 58,  1, 59, 47, 53,  2,
           60, 39, 48, 27, 54, 33, 42,  3,
@@ -117,12 +113,12 @@ uint NodeIndex::Level() {
   level |= level >> 8;
   level |= level >> 16;
   level |= level >> 32;
-  return tab64[((uint64_t)((level - (level >> 1))*0x07EDD5E59A4E28C2)) >> 58]/3;
 
+  return tab64[((uint64_t)((level - (level >> 1))*0x07EDD5E59A4E28C2)) >> 58]/3;
 }
 
 uint NodeIndex::X() {
-  return oct_contract(code ^ (1 << 3*Level()) );
+  return oct_contract(code ^ (1l << 3*Level()) );
 }
 uint NodeIndex::Y() {
   return oct_contract(code >> 1);
@@ -131,56 +127,24 @@ uint NodeIndex::Z() {
   return oct_contract(code >> 2);
 }
 
-
-inline uint NodeIndex::oct_contract(uint_fast64_t code) {
-  static uint_fast64_t contract_masks[] = {
-          0x10C30C30C30C30C3,
-          0x100F00F00F00F00F,
-          0x001F0000FF0000FF,
-          0x001F00000000FFFF,
-          0x00000000001FFFFF
-  };
-  uint_fast64_t result = code & 0x1249249249249249;
-  for (int i = 0; i < 5; i++) {
-    result = (result | result >> (2 << i)) & contract_masks[i];
-  }
-  return (uint) result;
-}
-
 inline uint_fast64_t NodeIndex::oct_dilate(uint coord) {
-  static uint_fast64_t dilate_masks[] = {
-          0x001F00000000FFFF,
-          0x001F0000FF0000FF,
-          0x100F00F00F00F00F,
-          0x10C30C30C30C30C3,
-          0x1249249249249249
-  };
-
-  uint_fast64_t result = coord;
-  for (int i = 0; i < 5; i++) {
-    result = (result | result << (32 >> i)) & dilate_masks[i];
-  }
-  return result;
+  uint_fast64_t code = coord;
+  code = (code | code << 32) & 0x001F00000000FFFF;
+  code = (code | code << 16) & 0x001F0000FF0000FF;
+  code = (code | code <<  8) & 0x100F00F00F00F00F;
+  code = (code | code <<  4) & 0x10C30C30C30C30C3;
+  code = (code | code <<  2) & 0x1249249249249249;
+  return code;
 }
-
-inline uint_fast64_t NodeIndex::oct_dilate2(uint coord) {
-  coord = (coord | coord << 32) & 0x001F00000000FFFF;
-  coord = (coord | coord << 16) & 0x001F0000FF0000FF;
-  coord = (coord | coord <<  8) & 0x100F00F00F00F00F;
-  coord = (coord | coord <<  4) & 0x10C30C30C30C30C3;
-  coord = (coord | coord <<  2) & 0x1249249249249249;
-  return coord;
-}
-inline uint NodeIndex::oct_contract2(uint_fast64_t code) {
+inline uint NodeIndex::oct_contract(uint_fast64_t code) {
   code = code & 0x1249249249249249;
   code = (code | code >>  2) & 0x10C30C30C30C30C3;
   code = (code | code >>  4) & 0x100F00F00F00F00F;
   code = (code | code >>  8) & 0x001F0000FF0000FF;
   code = (code | code >> 16) & 0x001F00000000FFFF;
   code = (code | code >> 32) & 0x00000000001FFFFF;
-  return result;
+  return code;
 }
-
 
 /// Didn't invent of anything better than this =(
 template <>

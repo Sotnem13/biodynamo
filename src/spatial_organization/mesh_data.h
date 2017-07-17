@@ -3,8 +3,9 @@
 
 #include <unordered_map>
 #include <vector>
-#include "node_index.h"
-#include "bound.h"
+
+#include "spatial_organization/node_index.h"
+#include "spatial_organization/bound.h"
 
 
 namespace bdm {
@@ -14,26 +15,23 @@ using std::vector;
 using std::array;
 using std::unordered_map;
 
-
-
 template <typename T> class MeshData;
-
-
 
 /// Describes a hashed-octree node
 template <typename T>
 struct Node {
   uint_fast64_t location_code;
-  NodeIndex Index(){
-    return NodeIndex(location_code);
-  };
   T value;
   bool is_leaf;
+
+  inline NodeIndex Index() {
+    return NodeIndex(location_code);
+  };
 };
 
-/// Represent (a geometric object) as a set of finite
-/// elements for computational analysis or modeling.
+
 /// Implements hashed-octree.
+/// Represent (a geometric object) as a set of finite elements
 /// @tparam T - type of the data to be stored in the elements
 template <typename T>
 class MeshData {
@@ -50,37 +48,61 @@ class MeshData {
   /// @param bnd - Bound of the mesh
   /// @param init_value - value of root node of the tree
   /// @param max_level - maximum possible depth of the tree. After reaching that
-  /// point, nodes won't split
-
+  /// point, nodes won't split. Maximum depth is 21
   MeshData(const Bound &bnd, T init_value, int max_level);
 
-  void Put(const Point &p, T obj);
+  void Put(const Point &p, T val);
+
   T At(const Point &p);
 
  protected:
 
+  /// Returns node index of maximum level where point p is located
+  /// @param p - point in space
   NodeIndex NodeIndexAt(const Point &p_) const;
-  NodeIndex NodeIndexAt(const Point &p_, int level) const;
 
+  /// Returns node index on level l where point p is located
+  /// @param p - point in space
+  /// @param l - level of node index
+  NodeIndex NodeIndexAt(const Point &p_, int l) const;
+
+  /// Returns bound of node
+  /// @param index - node index
   Bound GetNodeBound(NodeIndex index) const;
-  Point NodeSizeAtLevel(uint level) const;
 
-  void Split(Node<T> *node);
+  /// Returns size of nodes on level l
+  /// @param l - level of nodes
+  Point NodeSizeAtLevel(uint l) const;
+
+  /// Splits node to 8 equal subspaces
+  /// @tparam T - type of mesh value
+  /// @node - pointer to node which will split
+  virtual void Split(Node<T> *node);
+
+  /// Splits
   void Split(NodeIndex node_index, NodeIndex need_depth_node_index);
 
 
-  Node<T>* CreateNode(NodeIndex);
+  /// Creates a node by the index where the node is located
+  /// @param index - index where the node is located
+  /// @return pointer to created node
+  Node<T>* CreateNode(NodeIndex index);
+
+  ///
   Node<T>* GetNode(NodeIndex);
 
-  Node<T>* FindLeaf(NodeIndex);
-  /// Binary search leaf level
-  Node<T>* BSLeaf(int min_l, int max_l, NodeIndex max_depth_index);
-  /// Linear search leaf level
-  Node<T>* LSLeaf(NodeIndex max_depth_index);
   /// Destroy Node
   void DestroyNode(NodeIndex);
 
-  static constexpr auto root_index = 0b0001;
+  ///
+  Node<T>* FindLeaf(NodeIndex);
+
+  /// Binary search leaf level
+  Node<T>* BSLeaf(int min_l, int max_l, NodeIndex max_depth_index);
+
+  /// Linear search leaf level
+  Node<T>* LSLeaf(NodeIndex max_depth_index);
+
 
   using HashTable = unordered_map<uint_fast64_t, Node<T>>;
 
@@ -108,8 +130,7 @@ MeshData<T>::MeshData()
 
 template <typename T>
 MeshData<T>::MeshData(const Bound &bnd, T value, int max_level)
-        : bound_(bnd), empty_val_(value),
-        max_level_(max_level), levels(max_level) {
+        : levels(max_level), bound_(bnd), max_level_(max_level) {
 
   /// Reserve memory for each level
   for (int i = 0; i < max_level; i++) {
@@ -118,16 +139,14 @@ MeshData<T>::MeshData(const Bound &bnd, T value, int max_level)
   }
 
   /// Root Node initialize
-  Node<T> n = {root_index, value};
+  Node<T> n = {0b001, value};
   n.is_leaf = true;
-  levels[0][root_index] = n;
+  levels[0][0b001] = n;
 
   /// Calculate root node size
   root_size_ = bound_.near_right_top_point_
                + bound_.far_left_bottom_point_
                  * (-1);
-
-
 
 }
 
@@ -158,42 +177,34 @@ NodeIndex MeshData<T>::NodeIndexAt(const Point &p_) const {
 
 template <typename T>
 NodeIndex MeshData<T>::NodeIndexAt(const Point &p_, int level) const {
-  auto node_size = NodeSizeAtLevel(level-1);
+  auto node_size = NodeSizeAtLevel(level);
   auto p = p_ + bound_.far_left_bottom_point_ * (-1);
 
   uint x = p.x_ / node_size.x_;
   uint y = p.y_ / node_size.y_;
   uint z = p.z_ / node_size.z_;
 
-  auto index = NodeIndex(x, y, z, level);
-//  cout << bitset<60>(index.code) << endl;
-//  cout << bitset<60>(x) << endl;
-//  cout << bitset<60>(x).size() << endl;
-//  auto node_location_code = 1 << 3*level |
-//          NodeIndex::oct_dilate(x) << 0 |
-//          NodeIndex::oct_dilate(y) << 1 |
-//          NodeIndex::oct_dilate(z) << 2;
-
-   return index;
+  return NodeIndex(x, y, z, level);
 }
 
 template <typename T>
 Point MeshData<T>::NodeSizeAtLevel(uint level) const {
-  return root_size_ * (1.0 / (1 << level));
+  return root_size_ * (1.0 / (1l << level));
 }
 
 template <typename T>
 Bound MeshData<T>::GetNodeBound(NodeIndex index) const {
   auto node_size = NodeSizeAtLevel(index.Level());
-  uint x, y, z;
-  std::tie(x, y, z) = index.Position();
+  uint x = index.X();
+  uint y = index.Y();
+  uint z = index.Z();
 
   Point local_position = {node_size.x_*x,
                           node_size.y_*y,
                           node_size.z_*z};
 
-  auto center = bound_.far_left_bottom_point_ + local_position;
-  return {center + node_size*(-1), center + node_size};
+  auto far_left_bottom_point = bound_.far_left_bottom_point_ + local_position;
+  return {far_left_bottom_point, far_left_bottom_point + node_size};
 }
 
 template <typename T>
@@ -215,7 +226,7 @@ template <typename T>
 void MeshData<T>::Split(NodeIndex node_index, NodeIndex need_depth_node_index) {
   while (node_index.Level() < need_depth_node_index.Level()) {
     auto node = GetNode(node_index);
-    Split(node);
+    this->Split(node);
     auto level_offset =
             need_depth_node_index.Level() - node_index.Level() - 1;
     node_index = NodeIndex(need_depth_node_index.code >> (3*level_offset));
@@ -225,7 +236,7 @@ void MeshData<T>::Split(NodeIndex node_index, NodeIndex need_depth_node_index) {
 template <typename T>
 Node<T>* MeshData<T>::CreateNode(NodeIndex node_index) {
   auto &nodes = levels[node_index.Level()];
-  nodes[node_index.code] = {node_index.code, empty_val_, true};
+  nodes[node_index.code] = {node_index.code, 0, true};
   auto node = &nodes[node_index.code];
   return node;
 }

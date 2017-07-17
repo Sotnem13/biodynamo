@@ -1,31 +1,18 @@
 #ifndef BIODYNAMO_ADAPTIVE_MESH_H
 #define BIODYNAMO_ADAPTIVE_MESH_H
 
-#include <iostream>
-#include <cstdint>
 #include <vector>
 #include <stack>
-#include <array>
-#include <list>
 #include <unordered_map>
-#include <unordered_set>
-#include <bitset>
 #include <functional>
 
-
-#include "spatial_organization/octree_node.h"
-
-#include "spatial_organization/mesh_tree_node.h"
-#include "spatial_organization/voxel.h"
 #include "spatial_organization/node_index.h"
 #include "spatial_organization/mesh_data.h"
 
 namespace bdm {
 namespace spatial_organization {
 
-using namespace std;
 using std::vector;
-using std::array;
 using std::unordered_map;
 using std::function;
 
@@ -34,82 +21,71 @@ template <typename T>
 class AdaptiveMesh : public MeshData<T> {
  public:
 
-  class Element;
-
+  /// Empty constructor, initializes with bounds {0, 0, 0, 1, 1, 1},
+  /// maximum depth 10,
+  /// value of root with 0
+  /// @tparam T - type of the data to be stored in the mesh
   AdaptiveMesh();
+
+  /// Constructor
+  /// @tparam T  - type of the data to be stored in the mesh
+  /// @param bnd - Bound of the mesh
+  /// @param init_value - value of root node of the tree
+  /// @param max_level - maximum possible depth of the tree. After reaching that
+  /// point, nodes won't split. Maximum depth is 21
   AdaptiveMesh(const Bound &bnd, T empty_val, int max_level);
 
+  /// Destructor
   ~AdaptiveMesh();
+
+  /// Something like access policy
+  class Element;
 
   void Refine(function<void(Element&)> refine_func,
           bool mode = false);
 
-
-  class Element {
-   public:
-    bool Changed() {
-      return Value() != node_->value;
-    }
-    T Value() {
-      return value;
-    }
-    void SetValue(T new_value) {
-      value = new_value;
-    }
-
-    Point GetPosition() {
-      return parent_->GetNodeBound(node_->Index());
-    }
-
-    vector<pair<T, Point>> Neighbors() {
-      vector<pair<T, Point>> result;
-      result.reserve(neighbors_->size());
-      auto node_index = node_->Index();
-      auto node_size = parent_->NodeSizeAtLevel(node_index.Level());
-      int64_t x, y, z;
-      tie(x, y, z) = node_index.Position();
-
-      for (auto neighbor_index : *neighbors_) {
-//        auto neighbor_value = parent_->GetNode(neighbor_index);
-//        if (neighbor == nullptr) {
-//          parent_
-//          parent_->GetNode(neighbor_index.Parent());
-//        }
-        int64_t x_, y_, z_;
-        tie(x_, y_, z_) = neighbor_index.Position();
-        auto neighbor_value = parent_->At(Point(x_, y_, z_));
-        auto delta = Point(x - x_, y - y_, z - z_);
-        delta.x_*=node_size.x_;
-        delta.y_*=node_size.y_;
-        delta.z_*=node_size.z_;
-        result.push_back(make_pair(neighbor_value, delta));
-      }
-      return result;
-    }
-
-  private:
-    Element(Node<T>* node, vector<NodeIndex>* neighbors, AdaptiveMesh<T>* parent) :
-            node_(node), neighbors_(neighbors), parent_(parent), value(node->value){
-    }
-
-    Node<T> *node_;
-    vector<NodeIndex> * neighbors_;
-    AdaptiveMesh<T>* parent_;
-    T value;
-    friend AdaptiveMesh;
-  };
-
 //private:
 protected:
+  ///
   void Split(Node<T> *node);
+  ///
   void Coarse(Node<T> *node);
 
-//  static vector<NodeIndex> GetAdjacentIndex(NodeIndex index, int at_level);
-//  template <typename>
-//  friend AccessPolicy;
 
-//  AccessPolicy<T>
 
+};
+
+
+/// Octree node wrapper
+template <typename T>
+class AdaptiveMesh<T>::Element {
+public:
+
+  /// Is value changed
+  inline bool Changed();
+
+  ///
+  inline T Value();
+
+  ///
+  inline void SetValue(T new_value);
+
+  /// Return mesh element bound
+  inline Bound GetBound();
+
+  /// Return vector of neighbor value and delta position
+  vector<pair<T, Point>> Neighbors();
+
+private:
+  Element(Node<T>* node, vector<NodeIndex>* neighbors, AdaptiveMesh<T>* parent)
+          : node_(node), neighbors_(neighbors),
+            parent_(parent), value(node->value) {}
+
+  Node<T> *node_;
+  vector<NodeIndex> * neighbors_;
+  AdaptiveMesh<T>* parent_;
+  T value;
+  friend AdaptiveMesh;
 };
 
 template <typename T>
@@ -127,8 +103,9 @@ AdaptiveMesh<T>::~AdaptiveMesh() {}
 template <typename T>
 void AdaptiveMesh<T>::Split(Node<T> *node) {
   MeshData<T>::Split(node);
-
-  auto neighbors = NodeIndex::GetAdjacentIndex<true>(node->Index(), node->Index().Level());
+  auto node_index = node->Index();
+  auto neighbors =
+          NodeIndex::GetAdjacentIndex<true>(node_index, node_index.Level());
 
   for (auto neighbor_index : neighbors) {
     if (neighbor_index.Parent().code != node->Index().Parent().code) {
@@ -143,24 +120,27 @@ template <typename T>
 void AdaptiveMesh<T>::Coarse(Node<T>* node) {
   if (node == nullptr || node->is_leaf) return;
 
-  auto first_child = this->GetNode(NodeIndex(node->location_code << 3));
+  auto node_index = node->Index();
+  auto first_child = this->GetNode(NodeIndex(node_index.code << 3));
   auto need_coarse = true;
 
   for (int i = 0; i < 8 && need_coarse; i++) {
     auto child_index = NodeIndex(node->location_code << 3 | i);
     auto child = this->GetNode(child_index);
-    if(child && !child->is_leaf) {
+    if (child && !child->is_leaf) {
       Coarse(child);
     }
-    need_coarse = child->is_leaf && first_child->value == child->value;
+    need_coarse = child->is_leaf &&
+            first_child->value == child->value;
   }
 
   if (need_coarse) {
-    auto neighbors = NodeIndex::GetAdjacentIndex<true>(node->Index(), node->Index().Level());
+    auto neighbors = NodeIndex::GetAdjacentIndex<true>(node_index,
+                                                       node_index.Level());
     for (int i = 0; i < neighbors.size() && need_coarse; i++) {
       auto neighbor = this->GetNode(neighbors[i]);
-      if (!neighbor) {
-        neighbor = this->GetNode(neighbor->Index().Parent());
+      if (neighbor == nullptr) {
+        neighbor = this->GetNode(node_index.Parent());
       }
       need_coarse = neighbor && neighbor->is_leaf &&
               neighbor->value == first_child->value;
@@ -169,7 +149,7 @@ void AdaptiveMesh<T>::Coarse(Node<T>* node) {
       node->value = first_child->value;
       node->is_leaf = true;
       for (int i = 0; i <8; i++) {
-        auto child_index = NodeIndex(node->location_code << 3 | i);
+        auto child_index = NodeIndex(node_index.code << 3 | i);
         this->DestroyNode(child_index);
       }
     }
@@ -178,9 +158,8 @@ void AdaptiveMesh<T>::Coarse(Node<T>* node) {
 
 
 template <typename T>
-void AdaptiveMesh<T>::Refine(
-        function<void(Element&)> refine_func,
-        bool mode) {
+void AdaptiveMesh<T>::Refine(function<void(Element&)> refine_func,
+                             bool mode) {
 
   auto &leafs = this->levels[this->max_level_];
 
@@ -199,12 +178,9 @@ void AdaptiveMesh<T>::Refine(
     auto &node = it.second;
     auto neighbors = neighbor_func(node.Index(), this->max_level_);
     Element elem(&node, &neighbors, this);
-
     for (auto &neighbor_index : neighbors) {
-      auto neighbor_level = neighbor_index.Level();
-//      auto neighbor = this->BSLeaf(neighbor_level - 1, neighbor_level, neighbor_index);
       auto neighbor = this->LSLeaf(neighbor_index);
-      if (neighbor->Index().Level() != this->max_level_ + 1) {
+      if (neighbor->Index().Level() != this->max_level_) {
         stack.push(neighbor_index);
       }
     }
@@ -236,7 +212,6 @@ void AdaptiveMesh<T>::Refine(
 
   for (auto &n : new_values) {
     auto node = n.first;
-    cout << node->location_code  << n.second << endl;
     node->value = n.second;
   }
 
@@ -247,6 +222,52 @@ void AdaptiveMesh<T>::Refine(
 }
 
 
+template <typename T>
+inline bool AdaptiveMesh<T>::Element::Changed() {
+  return Value() != node_->value;
+}
+
+template <typename T>
+inline T AdaptiveMesh<T>::Element::Value() {
+  return value;
+}
+
+template <typename T>
+inline void AdaptiveMesh<T>::Element::SetValue(T new_value) {
+  value = new_value;
+}
+
+template <typename T>
+inline Bound AdaptiveMesh<T>::Element::GetBound() {
+  return parent_->GetNodeBound(node_->Index());
+}
+
+template <typename T>
+vector<pair<T, Point>> AdaptiveMesh<T>::Element::Neighbors() {
+  vector<pair<T, Point>> result;
+  result.reserve(neighbors_->size());
+  auto node_index = node_->Index();
+  auto node_size = parent_->NodeSizeAtLevel(node_index.Level());
+
+  uint x = node_index.X();
+  uint y = node_index.Y();
+  uint z = node_index.Z();
+
+  for (auto neighbor_index : *neighbors_) {
+
+    uint x_ = neighbor_index.X();
+    uint y_ = neighbor_index.Y();
+    uint z_ = neighbor_index.Z();
+
+    auto neighbor_value = parent_->FindLeaf(neighbor_index)->value;
+    auto delta = Point(x - x_, y - y_, z - z_);
+    delta.x_*=node_size.x_;
+    delta.y_*=node_size.y_;
+    delta.z_*=node_size.z_;
+    result.push_back(make_pair(neighbor_value, delta));
+  }
+  return result;
+}
 
 
 }  // namespace spatial_organization
