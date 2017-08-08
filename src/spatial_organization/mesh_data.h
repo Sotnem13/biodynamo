@@ -4,9 +4,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "spatial_organization/node_index.h"
-#include "spatial_organization/bound.h"
 
+#include "spatial_organization/bound.h"
+#include "spatial_organization/node_index.h"
 
 namespace bdm {
 namespace spatial_organization {
@@ -57,7 +57,7 @@ class MeshData {
 
  protected:
 
-  /// Returns node index of maximum level where point p is located
+  /// Returns node index on maximum level where point p is located
   /// @param p - point in space
   NodeIndex NodeIndexAt(const Point &p_) const;
 
@@ -117,6 +117,7 @@ class MeshData {
 
   /// Size of root node
   Point root_size_;
+
  private:
 
 

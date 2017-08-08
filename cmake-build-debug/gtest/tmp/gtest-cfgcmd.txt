@@ -1,1 +1,0 @@
-cmd='/home/sotnem/clion-2017.1/bin/cmake/bin/cmake;-C/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/gtest/tmp/gtest-cache-$<CONFIG>.cmake;-GCodeBlocks - Unix Makefiles;/home/sotnem/CLionProjects/biodynamo/cmake-build-debug/gtest/src/gtest'

@@ -35,16 +35,16 @@ struct NodeIndex {
   explicit NodeIndex(uint_fast64_t code);
 
   /// The depth of node is floor(log2(k)/3)
-  uint Level();
+  inline uint Level();
 
   /// The key of the parent of node is obtained
   /// by truncating the 3 least significant bits of k(n)
-  NodeIndex Parent();
+  inline NodeIndex Parent();
 
   /// Restore the coordinate from key
-  uint X();
-  uint Y();
-  uint Z();
+  inline uint X();
+  inline uint Y();
+  inline uint Z();
 
   /// Integer dilation, for interleaving the bits of coordinate
   /// For more information, see
@@ -63,7 +63,7 @@ struct NodeIndex {
   /// like a (x-1, y-1, z-1) (x+1, y-1, z-1)
   /// @tparam T - type of the return adjacent Index
   template <bool>
-  static vector<NodeIndex> GetAdjacentIndex(NodeIndex index, int at_level);
+  static inline vector<NodeIndex> GetAdjacentIndex(NodeIndex index, int at_level);
 
 
   union {
@@ -79,22 +79,22 @@ struct NodeIndex {
 
 };
 
-NodeIndex::NodeIndex() : code(1) {}
+inline NodeIndex::NodeIndex() : code(1) {}
 
-NodeIndex::NodeIndex(uint_fast64_t code_) : code(code_) {}
+inline NodeIndex::NodeIndex(uint_fast64_t code_) : code(code_) {}
 
-NodeIndex::NodeIndex(uint x, uint y, uint z, uint level) {
+inline NodeIndex::NodeIndex(uint x, uint y, uint z, uint level) {
   code = oct_dilate(x)    |
        oct_dilate(y) << 1 |
        oct_dilate(z) << 2;
   code ^= 1l << (3*level);
 }
 
-NodeIndex NodeIndex::Parent() {
+inline NodeIndex NodeIndex::Parent() {
   return NodeIndex(this->code >> 3);
 }
 
-uint NodeIndex::Level() {
+inline uint NodeIndex::Level() {
   static const int tab64[64] = {
           63,  0, 58,  1, 59, 47, 53,  2,
           60, 39, 48, 27, 54, 33, 42,  3,
@@ -117,13 +117,13 @@ uint NodeIndex::Level() {
   return tab64[((uint64_t)((level - (level >> 1))*0x07EDD5E59A4E28C2)) >> 58]/3;
 }
 
-uint NodeIndex::X() {
+inline uint NodeIndex::X() {
   return oct_contract(code ^ (1l << 3*Level()) );
 }
-uint NodeIndex::Y() {
+inline uint NodeIndex::Y() {
   return oct_contract(code >> 1);
 }
-uint NodeIndex::Z() {
+inline uint NodeIndex::Z() {
   return oct_contract(code >> 2);
 }
 
@@ -148,7 +148,7 @@ inline uint NodeIndex::oct_contract(uint_fast64_t code) {
 
 /// Didn't invent of anything better than this =(
 template <>
-vector<NodeIndex> NodeIndex::GetAdjacentIndex<true>(NodeIndex index, int at_level) {
+inline vector<NodeIndex> NodeIndex::GetAdjacentIndex<true>(NodeIndex index, int at_level) {
   int node_level = index.Level();
   vector<NodeIndex> result;
 
@@ -238,7 +238,7 @@ vector<NodeIndex> NodeIndex::GetAdjacentIndex<true>(NodeIndex index, int at_leve
 }
 
 template <>
-vector<NodeIndex> NodeIndex::GetAdjacentIndex<false>(NodeIndex index, int at_level) {
+inline vector<NodeIndex> NodeIndex::GetAdjacentIndex<false>(NodeIndex index, int at_level) {
   int node_level = index.Level();
   vector<NodeIndex> result;
 
