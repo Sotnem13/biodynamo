@@ -2,10 +2,15 @@
 #define BIODYNAMO_NODE_INDEX_H
 
 #include <vector>
+#include <array>
+#include <utility>
+
 namespace bdm {
 namespace spatial_organization {
 
 using std::vector;
+using std::array;
+using std::pair;
 /// Implement Morton keys
 /// The key k(n) of a node n can be generated recursively from the
 /// octree hierarchy: the key of the root is 1, and the key of the child
@@ -35,16 +40,16 @@ struct NodeIndex {
   explicit NodeIndex(uint_fast64_t code);
 
   /// The depth of node is floor(log2(k)/3)
-  inline uint Level();
+  inline uint Level() const;
 
   /// The key of the parent of node is obtained
   /// by truncating the 3 least significant bits of k(n)
-  inline NodeIndex Parent();
+  inline NodeIndex Parent() const;
 
   /// Restore the coordinate from key
-  inline uint X();
-  inline uint Y();
-  inline uint Z();
+  inline uint X() const;
+  inline uint Y() const;
+  inline uint Z() const;
 
   /// Integer dilation, for interleaving the bits of coordinate
   /// For more information, see
@@ -65,6 +70,52 @@ struct NodeIndex {
   template <bool>
   static inline vector<NodeIndex> GetAdjacentIndex(NodeIndex index, int at_level);
 
+
+  NodeIndex AdjacentX(int offset) const {
+    const auto level = Level();
+    const auto x = (X() + offset);
+    const auto c = code & 0x1249249249249249 ^ (1l << 3*level);
+    const auto r  = code ^ c;
+    return NodeIndex(r | oct_dilate(x));
+  }
+
+
+  NodeIndex AdjacentY(int offset) const {
+    const auto y = (Y() + offset);
+    const auto c = code & (0x1249249249249249 << 1);
+    const auto r  = code ^ c;
+    return NodeIndex(r | oct_dilate(y) << 1);
+  }
+
+  NodeIndex AdjacentZ(int offset) const {
+    const auto z = (Z() + offset);
+    const auto c = code & (0x1249249249249249 << 2);
+    const auto r  = code ^ c;
+    return NodeIndex(r | oct_dilate(z) << 2);
+  }
+
+
+
+  static inline vector<NodeIndex> GetAdjacentIndex(NodeIndex index) {
+    vector<NodeIndex> result;
+    result.reserve(6);
+
+    const auto x = index.X();
+    const auto y = index.Y();
+    const auto z = index.Z();
+    const auto level = index.Level();
+    const auto max_value = 1 << level;
+
+    if (x > 0) result.emplace_back(x - 1, y, z, level);
+    if (y > 0) result.emplace_back(x, y - 1, z, level);
+    if (z > 0) result.emplace_back(x, y, z - 1, level);
+
+    if (x + 1 < max_value) result.emplace_back(x + 1, y, z, level);
+    if (y + 1 < max_value) result.emplace_back(x, y + 1, z, level);
+    if (z + 1 < max_value) result.emplace_back(x, y, z + 1, level);
+
+    return result;
+  };
 
   union {
     /// Key k(n)
@@ -90,12 +141,12 @@ inline NodeIndex::NodeIndex(uint x, uint y, uint z, uint level) {
   code ^= 1l << (3*level);
 }
 
-inline NodeIndex NodeIndex::Parent() {
+inline NodeIndex NodeIndex::Parent() const {
   return NodeIndex(this->code >> 3);
 }
 
-inline uint NodeIndex::Level() {
-  static const int tab64[64] = {
+inline uint NodeIndex::Level() const {
+  static const uint tab64[64] = {
           63,  0, 58,  1, 59, 47, 53,  2,
           60, 39, 48, 27, 54, 33, 42,  3,
           61, 51, 37, 40, 49, 18, 28, 20,
@@ -117,13 +168,13 @@ inline uint NodeIndex::Level() {
   return tab64[((uint64_t)((level - (level >> 1))*0x07EDD5E59A4E28C2)) >> 58]/3;
 }
 
-inline uint NodeIndex::X() {
+inline uint NodeIndex::X() const {
   return oct_contract(code ^ (1l << 3*Level()) );
 }
-inline uint NodeIndex::Y() {
+inline uint NodeIndex::Y() const {
   return oct_contract(code >> 1);
 }
-inline uint NodeIndex::Z() {
+inline uint NodeIndex::Z() const {
   return oct_contract(code >> 2);
 }
 

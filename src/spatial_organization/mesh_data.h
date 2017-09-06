@@ -24,7 +24,7 @@ struct Node {
   T value;
   bool is_leaf;
 
-  inline NodeIndex Index() {
+  inline NodeIndex Index() const {
     return NodeIndex(location_code);
   };
 };
@@ -106,6 +106,7 @@ class MeshData {
 
   using HashTable = unordered_map<uint_fast64_t, Node<T>>;
 
+ // public:
   /// Tree levels
   vector<HashTable> levels;
 
@@ -131,11 +132,10 @@ MeshData<T>::MeshData()
 
 template <typename T>
 MeshData<T>::MeshData(const Bound &bnd, T value, int max_level)
-        : levels(max_level), bound_(bnd), max_level_(max_level) {
+        : levels(max_level+1), bound_(bnd), max_level_(max_level) {
 
   /// Reserve memory for each level
   for (int i = 0; i < max_level; i++) {
-    levels.push_back({});
     levels[i].reserve(1 << i);
   }
 

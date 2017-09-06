@@ -5,6 +5,7 @@
 #include <stack>
 #include <unordered_map>
 #include <functional>
+#include <bitset>
 
 #include "spatial_organization/node_index.h"
 #include "spatial_organization/mesh_data.h"
@@ -15,7 +16,6 @@ namespace spatial_organization {
 using std::vector;
 using std::unordered_map;
 using std::function;
-
 
 template <typename T>
 class AdaptiveMesh : public MeshData<T> {
@@ -40,9 +40,143 @@ class AdaptiveMesh : public MeshData<T> {
 
   /// Something like access policy
   class Element;
+  class Face;
 
   void Refine(function<void(Element&)> refine_func,
           bool mode = false);
+
+  void prepareChildList();
+
+  void prepareFaces();
+
+  void PrepareFacesXY(const Node<T>& node);
+  void PrepareFacesXZ(const Node<T>& node);
+  void PrepareFacesYZ(const Node<T>& node);
+
+//  void Refine(const function<void(Face&)> &refine_func) {
+//
+////    prepareChildList();
+////    prepareFaces();
+//
+//    for (auto &face : faces) {
+//      refine_func(face);
+//    }
+//
+//    changes.clear();
+//    for (const auto &face : faces) {
+//      changes[face.front] += face.flux;
+//      changes[face.back] -= face.flux;
+//    }
+//
+////    coarse.clear();
+//    for (const auto &change : changes) {
+//      const auto node_index = NodeIndex(change.first);
+//      const auto dvalue = change.second;
+//      auto node = FindOrCreateNode(node_index);
+//      node->value += dvalue;
+//      coarse[node_index.Parent().code]++;
+//
+//    }
+//
+//    Coarse();
+//
+//  }
+
+//  void Coarse() {
+//
+//    for (auto c : coarse) {
+//      if (c.second == 8) {
+//        auto node = GetNode(NodeIndex(c.first));
+//        Coarse(node);
+//      }
+//    }
+//
+//  }
+
+  void Refine(const function<void(Face&)> &refine_func) {
+
+//    prepareChildList();
+    prepareFaces();
+
+    changes.clear();
+    // #pragma omp parallel for
+    for (size_t i = 0; i < faces.size(); i++) {
+      const auto &face = faces[i];
+      const auto n1 = FindOrCreateNode(face.first);
+      const auto n2 = FindOrCreateNode(face.second);
+
+//      node_faces.push
+      Face f(n1, n2);
+      refine_func(f);
+      changes[face.first.code] += f.flux;
+      changes[face.second.code] -= f.flux;
+    }
+
+//    changes.clear();
+////
+//    for (const auto &face : faces) {
+//      changes[face.front] += face.flux;
+//      changes[face.back] -= face.flux;
+//    }
+
+//    #pragma omp parallel for
+//    for (size_t i = 0; i < changes.bucket_count(); i++) {
+//
+//      for (auto change = changes.begin(i); change != changes.end(i); ++change) {
+
+//      }
+      for (auto &change : changes) {
+        const auto node_index = NodeIndex(change.first);
+        const auto dvalue = change.second;
+        auto node = this->GetNode(node_index);
+        node->value += dvalue;
+      }
+
+//    }
+
+  }
+
+
+
+  Node<T>* FindOrCreateNode(NodeIndex index) {
+    auto node = this->GetNode(index);
+    if (node == nullptr) {
+      auto parent = this->GetNode(index.Parent());
+      this->Split(parent);
+      node = this->GetNode(index);
+
+
+
+//      auto leaf = FindLeaf(index);
+//      Split(leaf->Index(), index);
+//      node = GetNode(index);
+    }
+    return node;
+  }
+
+//  void Put(const Point &p, T obj) {
+//    auto node_index = NodeIndexAt(p);
+//    auto leaf = FindLeaf(node_index);
+//
+//    if (leaf->value != obj) {
+//      if (leaf->Index().Level() < max_level_) {
+//        this->Split(leaf->Index(), node_index);
+//        leaf = GetNode(node_index);
+//      }
+//      leaf->value = obj;
+////      auto parent  = GetNode(node_index.Parent());
+//
+//
+////      leaf->Faces();
+////      NodeFace face(leaf->location_code, {0,0,0});
+////      NodeFace face(leaf->location_code, {0,0,1});
+////      NodeFace face(leaf->location_code, {0,1,0});
+////      NodeFace face(leaf->location_code, {1,0,0});
+//
+////      faces.push_back(
+//
+//    }
+//  }
 
 //private:
 protected:
@@ -51,7 +185,10 @@ protected:
   ///
   void Coarse(Node<T> *node);
 
-
+  vector<pair<NodeIndex, NodeIndex>> faces;
+  vector<Face> node_faces;
+  vector<uint_fast64_t> childs_for_refine;
+  unordered_map<uint_fast64_t, T> changes;
 
 };
 
@@ -89,6 +226,44 @@ private:
 };
 
 template <typename T>
+class AdaptiveMesh<T>::Face {
+ public:
+
+  inline T FrontValue() {
+    return fvalue;
+  };
+
+  inline T BackValue() {
+    return bvalue;
+  };
+
+  inline void SetFlux(T dvalue) {
+    flux = dvalue;
+  };
+
+  Face(const Node<T> *n1, const Node<T> *n2) : flux(0), fvalue(n1->value), bvalue(n2->value) {
+    front = n1->location_code;
+    back  = n2->location_code;
+  }
+
+
+  Face() : flux(0), fvalue(0), bvalue(0), front(0), back(0) {
+
+  }
+ private:
+
+  T flux;
+  T fvalue;
+  T bvalue;
+  uint_fast64_t front;
+  uint_fast64_t back;
+
+  friend AdaptiveMesh;
+};
+
+
+
+template <typename T>
 AdaptiveMesh<T>::AdaptiveMesh()
         : AdaptiveMesh(Bound{0, 0, 0, 1, 1, 1}, 0, 10) {}
 
@@ -124,7 +299,7 @@ void AdaptiveMesh<T>::Coarse(Node<T>* node) {
   auto first_child = this->GetNode(NodeIndex(node_index.code << 3));
   auto need_coarse = true;
 
-  for (int i = 0; i < 8 && need_coarse; i++) {
+  for (int i = 1; i < 8 && need_coarse; i++) {
     auto child_index = NodeIndex(node->location_code << 3 | i);
     auto child = this->GetNode(child_index);
     if (child && !child->is_leaf) {
@@ -157,15 +332,18 @@ void AdaptiveMesh<T>::Coarse(Node<T>* node) {
 }
 
 
+
 template <typename T>
 void AdaptiveMesh<T>::Refine(function<void(Element&)> refine_func,
                              bool mode) {
 
-  auto &leafs = this->levels[this->max_level_];
+  auto &leafs = this->levels.back();
 
   auto new_values = vector<pair<Node<T>*, T>>();
   std::stack<NodeIndex> stack;
   new_values.reserve(leafs.size());
+
+//  buffer
 
   auto neighbor_func = [](bool m){
     if (m)
@@ -219,6 +397,188 @@ void AdaptiveMesh<T>::Refine(function<void(Element&)> refine_func,
     auto node = n.first;
     Coarse(this->GetNode(node->Index().Parent()));
   }
+}
+
+
+template <typename T>
+void AdaptiveMesh<T>::PrepareFacesYZ(const Node<T> &node) {
+  const auto max_coord = (1 << this->max_level_);
+  const auto index = node.Index();
+  const auto x = index.X();
+
+  if (x > 0) {
+    const auto neighbor = index.AdjacentX(-1);
+    const auto np = this->GetNode(neighbor);
+    if (np == nullptr) {
+      faces.emplace_back(index, neighbor);
+    }
+  }
+
+  if (x + 1 < max_coord) {
+    const auto neighbor = index.AdjacentX(1);
+    const auto np = this->FindLeaf(neighbor);
+    if (np && np->value != node.value) {
+      faces.emplace_back(index, neighbor);
+    }
+  }
+}
+
+template <typename T>
+void AdaptiveMesh<T>::PrepareFacesXY(const Node<T> &node) {
+  const auto max_coord = (1 << this->max_level_);
+  const auto index = node.Index();
+  const auto z = index.Z();
+
+  if (z > 0) {
+    const auto neighbor = index.AdjacentZ(-1);
+    const auto np = this->GetNode(neighbor);
+    if (np == nullptr) {
+      faces.emplace_back(index, neighbor);
+    }
+  }
+
+  if (z + 1 < max_coord) {
+    const auto neighbor = index.AdjacentZ(1);
+    const auto np = this->FindLeaf(neighbor);
+    if (np && np->value != node.value) {
+      faces.emplace_back(index, neighbor);
+    }
+  }
+}
+
+template <typename T>
+void AdaptiveMesh<T>::PrepareFacesXZ(const Node<T> &node) {
+  const auto max_coord = (1 << this->max_level_);
+  const auto index = node.Index();
+  const auto y = index.Y();
+
+
+  if (y > 0) {
+    const auto neighbor = index.AdjacentY(-1);
+    const auto np = this->GetNode(neighbor);
+    if (np == nullptr) {
+      faces.emplace_back(index, neighbor);
+    }
+  }
+
+  if (y + 1 < max_coord) {
+    const auto neighbor = index.AdjacentY(1);
+    const auto np = this->FindLeaf(neighbor);
+    if (np && np->value != node.value) {
+      faces.emplace_back(index, neighbor);
+    }
+  }
+}
+//template <typename T>
+//void AdaptiveMesh<T>::prepareChildList() {
+
+
+
+//  static const array<uint, 4> child_codes = {0b000, 0b011, 0b101, 0b110};
+//  const auto &leaf_parents = this->levels[this->max_level_ - 1];
+
+
+
+//  childs_for_refine.resize(0);
+
+//  #pragma omp parallel
+//  {
+//    std::vector<int> vec_private;
+//
+//    #pragma omp for
+//    for (size_t i = 0; i < leaf_parents.bucket_count(); i++) {
+//
+//      for (auto parent = leaf_parents.begin(i); parent != leaf_parents.end(i); ++parent) {
+//        if (parent->second.is_leaf) continue;
+//        const auto lc = parent->first << 3;
+//
+//        for (const auto &child_code : child_codes) {
+//          vec_private.emplace_back(lc | child_code);
+//        }
+//      }
+//
+//    }
+//    #pragma omp critical
+//    childs_for_refine.insert(childs_for_refine.end(), vec_private.begin(), vec_private.end());
+//
+//  };
+
+
+
+
+//  for (const auto &parent : leaf_parents) {
+//    if (parent.second.is_leaf) continue;
+//
+//
+//
+//    const auto lc = parent.first << 3;
+//
+//    for (const auto &child_code : child_codes) {
+//      childs_for_refine.emplace_back(lc | child_code);
+//    }
+//  }
+//}
+
+template <typename T>
+void AdaptiveMesh<T>::prepareFaces() {
+
+  const auto &leafs = this->levels[this->max_level_];
+  const auto max_coord = (1 << this->max_level_);
+
+  faces.clear();
+
+  for (const auto &leaf : leafs) {
+    const auto node = leaf.second;
+//    const auto index = node.Index();
+
+    PrepareFacesXY(node);
+    PrepareFacesYZ(node);
+    PrepareFacesXZ(node);
+
+  }
+
+//  const auto index = node.Index();
+//  const auto x = index.X();
+
+//  if (x > 0) {
+//    const auto neighborX = index.AdjacentX(-1);
+//    const auto np = GetNode(neighborX);
+//    if (np == nullptr) {
+//      faces.emplace_back(index, neighborX);
+//    }
+//  }
+//
+//  if (x + 1 < max_coord) {
+//    const auto neighborX = index.AdjacentX(1);
+//    const auto np = GetNode(neighborX);
+//    if (np && np->value != node.value) {
+//      faces.emplace_back(index, neighborX);
+//    }
+//  }
+
+
+////  faces[]
+//
+//  faces.resize(0);
+////  #pragma omp parallel for
+////  for (size_t j = 0; j < childs_for_refine.size(); j++) {
+////    const auto &child_index = childs_for_refine[j];
+////  }
+//
+//
+//  for (const auto &child_index : childs_for_refine) {
+//    const auto child_neighbors = NodeIndex::GetAdjacentIndex(NodeIndex{child_index});
+//    const auto child = this->GetNode(NodeIndex{child_index});
+//
+//    for (const auto &neighbor_index : child_neighbors) {
+//      const auto neighbor = FindOrCreateNode(neighbor_index);
+//      if (neighbor->value != child->value)
+//        faces.emplace_back(child, neighbor);
+////        faces.push_back(Face{child, neighbor});
+//    }
+//  }
+//
+//
 }
 
 

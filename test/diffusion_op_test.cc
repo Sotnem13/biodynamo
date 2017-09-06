@@ -60,7 +60,7 @@ void runDiffusionStep(double**** Conc, double**** tempConc, int L, double D) {
 TEST(DiffusionOp, CompareWithNewCastleDiffusionTest) {
 
   double diffusion_constant = 0.1;
-  int iteration_count = 3;
+  int iteration_count = 15;
   DiffusionOp op(iteration_count, diffusion_constant);
 
   int L = 128;

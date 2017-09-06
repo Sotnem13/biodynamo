@@ -75,6 +75,63 @@ TEST(NodeIndexTest, AdjacentIndexAtSameLevelTest2) {
 
 
 }
+TEST(NodeIndexTest, AdjacentIndexTest1) {
+  NodeIndex index(1, 1, 1, 4);
+
+
+  ASSERT_EQ(index.AdjacentX(-1).code, NodeIndex(0, 1, 1, 4).code);
+  ASSERT_EQ(index.AdjacentX( 1).code, NodeIndex(2, 1, 1, 4).code);
+  ASSERT_EQ(index.AdjacentY(-1).code, NodeIndex(1, 0, 1, 4).code);
+  ASSERT_EQ(index.AdjacentY( 1).code, NodeIndex(1, 2, 1, 4).code);
+  ASSERT_EQ(index.AdjacentZ(-1).code, NodeIndex(1, 1, 0, 4).code);
+  ASSERT_EQ(index.AdjacentZ( 1).code, NodeIndex(1, 1, 2, 4).code);
+
+  ASSERT_EQ(index.AdjacentZ( 2).code, NodeIndex(1, 1, 3, 4).code);
+
+//  NodeIndex n1(1, 1, 0, 4);
+//
+//
+//
+//
+//
+//  NodeIndex n2(0, 1, 0, 4);
+//  NodeIndex n3(1, 0, 0, 4);
+//
+//  std::vector<NodeIndex> n;
+//
+//  n.push_back(n1);
+//  n.push_back(n2);
+//  n.push_back(n3);
+//
+//  auto neighbors = NodeIndex::GetAdjacentIndex<false>(index, 3);
+//
+//  auto comparator = [](NodeIndex a, NodeIndex b) {
+//    return a.code < b.code;
+//  };
+//  std::sort(n.begin(), n.end(), comparator);
+//  std::sort(neighbors.begin(), neighbors.end(), comparator);
+//
+//  for (int i = 0; i < neighbors.size(); i++) {
+//    ASSERT_EQ(n[i].code,neighbors[i].code);
+//  }
+//
+//
+//  neighbors = NodeIndex::GetAdjacentIndex<true>(index, 3);
+//
+//  n.push_back(NodeIndex(0, 1, 1, 3));
+//  n.push_back(NodeIndex(1, 0, 1, 3));
+//  n.push_back(NodeIndex(1, 1, 0, 3));
+//  n.push_back(NodeIndex(1, 1, 1, 3));
+//
+//  std::sort(n.begin(), n.end(), comparator);
+//  std::sort(neighbors.begin(), neighbors.end(), comparator);
+//
+//  for (int i = 0; i < neighbors.size(); i++) {
+//    ASSERT_EQ(n[i].code, neighbors[i].code);
+//  }
+
+}
+
 
 TEST(NodeIndexTest, AdjacentIndexAtSameLevelTest1) {
   NodeIndex index(0, 0, 0, 3);

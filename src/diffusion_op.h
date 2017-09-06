@@ -18,7 +18,7 @@ class DiffusionOp {
   DiffusionOp& operator=(const DiffusionOp&) = delete;
 
   template <typename T>
-  void Compute(AdaptiveMesh<T>* mesh) const {
+  void Compute1(AdaptiveMesh<T>* mesh) const {
     const double D = diffusion_constant_;
     for (int i = 0; i < iteration_count_; i++) {
       mesh->Refine([D](typename AdaptiveMesh<T>::Element &mesh_element) {
@@ -31,6 +31,21 @@ class DiffusionOp {
         new_value += delta_value*D/6.0;
         mesh_element.SetValue(new_value);
       }, false);
+    }
+  }
+
+  template <typename T>
+  void Compute(AdaptiveMesh<T>* mesh) const {
+    const double D = diffusion_constant_;
+
+    const auto &diffusion_flow = [D](typename AdaptiveMesh<T>::Face &face) {
+      const auto concentration_difference = face.BackValue() - face.FrontValue();
+      const auto flux = concentration_difference*D/6;
+      face.SetFlux(flux);
+    };
+
+    for (int i = 0; i < iteration_count_; i++) {
+      mesh->Refine(diffusion_flow);
     }
   }
 
